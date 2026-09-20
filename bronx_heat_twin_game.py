@@ -88,36 +88,52 @@ def apply_scenario(gdf, selected_geoids, canopy_add, beta, temp_min, temp_max):
 
 
 def make_plotly_map(gdf, value_col, selected_geoids):
-    fig = px.choropleth(
+    # Center the map on the actual data extent so it opens framed correctly
+    minx, miny, maxx, maxy = gdf.total_bounds
+    center_lat = (miny + maxy) / 2
+    center_lon = (minx + maxx) / 2
+ 
+    # choropleth_map fills the ENTIRE chart area (no aspect-ratio
+    # letterboxing like the old px.choropleth "geo" map did), and supports
+    # real pinch-to-zoom/pan like a normal map app, with a street basemap
+    # for context. map_style="carto-positron" needs no API token.
+    # (This is the current Plotly API name; older Plotly versions call the
+    # same thing choropleth_mapbox with a mapbox_style argument instead.)
+    fig = px.choropleth_map(
         gdf,
         geojson=gdf.geometry,
         locations=gdf.index,
         color=value_col,
         color_continuous_scale="Reds",
         hover_data=["GEOID", "RISK_INDEX", "RISK_SCENARIO", "DELTA_RISK"],
+        map_style="carto-positron",
+        center={"lat": center_lat, "lon": center_lon},
+        zoom=10.3,
+        opacity=0.75,
     )
-
-    fig.update_geos(fitbounds="locations", visible=False)
-
+    fig.update_traces(marker_line_width=0.6, marker_line_color="gray")
+ 
     # Highlight selected tracts with a blue outline overlay
     if selected_geoids:
         sel = gdf[gdf["GEOID"].isin(selected_geoids)]
         if not sel.empty:
-            highlight = px.choropleth(
+            highlight = px.choropleth_map(
                 sel,
                 geojson=sel.geometry,
                 locations=sel.index,
                 color_discrete_sequence=["rgba(0,0,0,0)"],  # transparent fill
+                map_style="carto-positron",
+                center={"lat": center_lat, "lon": center_lon},
+                zoom=10.3,
             ).data[0]
             highlight.marker.line.color = "blue"
             highlight.marker.line.width = 3
             highlight.showlegend = False
             highlight.hoverinfo = "skip"
             fig.add_trace(highlight)
-
+ 
     fig.update_layout(height=750, margin={"r": 0, "t": 0, "l": 0, "b": 0})
     return fig
-
 
 def handle_selection(event, gdf):
     """Read the Plotly selection event and toggle GEOIDs into session state."""

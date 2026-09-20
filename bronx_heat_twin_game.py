@@ -115,7 +115,7 @@ def make_plotly_map(gdf, value_col, selected_geoids):
             highlight.hoverinfo = "skip"
             fig.add_trace(highlight)
 
-    fig.update_layout(height=650, margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    fig.update_layout(height=750, margin={"r": 0, "t": 0, "l": 0, "b": 0})
     return fig
 
 
@@ -246,13 +246,18 @@ st.markdown(
 
 # Plotly interactive map with native Streamlit selection support
 fig = make_plotly_map(gdf, col, st.session_state.selected)
-
+ 
 event = st.plotly_chart(
     fig,
     use_container_width=True,
     on_select="rerun",
     selection_mode=["points", "box", "lasso"],
     key="map",
+    config={
+        "scrollZoom": True,       # enables pinch/scroll zoom INSIDE the chart
+        "displayModeBar": True,   # shows zoom/pan/reset buttons
+        "doubleClick": "reset",   # double-tap to reset zoom
+    },
 )
 
 handle_selection(event, gdf)

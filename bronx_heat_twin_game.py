@@ -9,7 +9,7 @@ import plotly.express as px
 # =========================
 st.set_page_config(page_title="Bronx Heat Twin Game", layout="wide")
 
-DATA_FILE = r"C:\Users\Administrator\OneDrive\Desktop\Digital Twin- Heat exposure\bronx_heat_twin_master.geojson"
+DATA_FILE = r"bronx_heat_twin_master.geojson"
 DEFAULT_BETA = 6.0
 
 

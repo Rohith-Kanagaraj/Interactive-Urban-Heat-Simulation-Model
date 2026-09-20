@@ -7,7 +7,7 @@ import plotly.express as px
 # =========================
 # CONFIG
 # =========================
-st.set_page_config(page_title="Bronx Heat Twin Game", layout="wide")
+st.set_page_config(page_title="Bronx Urban Heat Risk Simulator", layout="wide")
 
 DATA_FILE = r"bronx_heat_twin_master.geojson"
 DEFAULT_BETA = 6.0
@@ -237,7 +237,7 @@ else:
 # =========================
 # MAIN LAYOUT
 # =========================
-st.title("🔥 Bronx Heat Digital Twin Game")
+st.title("🔥 Bronx Urban Heat Risk Simulator")
 
 st.markdown(
     "### Click a tract to select it (shift-click for more), "
